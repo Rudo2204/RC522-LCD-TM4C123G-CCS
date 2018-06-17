@@ -12,6 +12,27 @@
 #include "LIB/Mfrc522.h"
 #include "tm4c123gh6pm.h"
 
+/*PIN Connections:
+ * Used SSI2 (Module 2)
+ *
+ * To use another Module or Reset Pin, the variables...
+ * NRSTPD and chipSelectPin should be changed to the Pin Mask.
+ * Also, in Mfrc522.cpp, the definitions of CHIPSELECT_BASE,...
+ * NRSTPD_BASE and SSI_BASE must be changed to the respective...
+ * Port Base used.
+ *
+ * Further versions should auto-change this values.
+ *
+ *
+ * SDA / CS / FSS ------------ PB5
+ * SCK  / CLK     ------------ PB4
+ * MOSI / TX      ------------ PB7
+ * MISO /  RX     ------------ PB6
+ *
+ * RST            ------------ PF0 *
+ *
+ */
+
 #define redLED   0x00000002
 #define blueLED  0x00000004
 #define greenLED 0x00000008
