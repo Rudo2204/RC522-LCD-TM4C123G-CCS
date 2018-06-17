@@ -16,10 +16,15 @@
  * Used SSI2 (Module 2)
  *
  * To use another Module or Reset Pin, the variables...
- * NRSTPD and chipSelectPin should be changed to the Pin Mask.
+ * ...NRSTPD and chipSelectPin should be changed to the Pin Mask.
+ *
  * Also, in Mfrc522.cpp, the definitions of CHIPSELECT_BASE,...
- * NRSTPD_BASE and SSI_BASE must be changed to the respective...
- * Port Base used.
+ * ...NRSTPD_BASE and SSI_BASE must be changed to the respective...
+ * ...Port Base used.
+ *
+ * Finally, the respective chipSelectPin and NRSTPD...
+ * ... GPIO Base and Pin should be enabled in InitSSI function.
+ *
  *
  * Further versions should auto-change this values.
  *
@@ -88,8 +93,8 @@ void InitSSI(){
     GPIOPinTypeSSI(GPIO_PORTB_BASE, GPIO_PIN_4 | GPIO_PIN_6 |
                    GPIO_PIN_7);
 
-    GPIOPinTypeGPIOOutput(GPIO_PORTB_BASE, GPIO_PIN_5);
-    GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_0);
+    GPIOPinTypeGPIOOutput(GPIO_PORTB_BASE, GPIO_PIN_5); //chipSelectPin
+    GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_0); //NRSTPD
 
     //
     SSIConfigSetExpClk(SSI2_BASE, SysCtlClockGet(), SSI_FRF_MOTO_MODE_0, SSI_MODE_MASTER, 4000000, 8);
