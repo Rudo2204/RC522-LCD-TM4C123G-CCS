@@ -10,7 +10,6 @@
 #include "driverlib/ssi.h"
 #include "utils/uartstdio.h"
 #include "LIB/Mfrc522.h"
-#include "tm4c123gh6pm.h"
 
 /*PIN Connections:
  * Used SSI2 (Module 2)

@@ -13,6 +13,6 @@
 	<createSlaveProjects value=""/>
 	<templateProperties value="id=com.ti.common.project.core.emptyProjectWithMainTemplate,"/>
 	<filesToOpen value="main.c,"/>
-	<origin value="D:/UFJF/Tiva/Projects/Tutorial/Tiva_UART_Tutorial_1"/>
-	<isTargetManual value="true"/>
+	<isTargetManual value="false"/>
+	<origin value="C:/Users/RAFAEL/Desktop/TivaProject"/>
 </projectOptions>
