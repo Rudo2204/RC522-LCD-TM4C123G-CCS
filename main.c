@@ -55,10 +55,11 @@
 #define blueLED  0x00000004
 #define greenLED 0x00000008
 
-#define CARD_LENGTH 10
+#define CARD_LENGTH 5 // Default should be 10
 
 void initLeds();
 void dumpHex(unsigned char* buffer, int len);
+void lcd_default();
 
 int chipSelectPin = 0x20;  //PB5
 int NRSTPD = 0x01; //PF0
@@ -128,12 +129,7 @@ int main(void) {
     initLeds();
 
     lcd_init();
-    lcd_clear();
-    lcd_gotoxy(2,0);
-
-    lcd_puts("Access Control");
-    lcd_gotoxy(0,1);
-    lcd_puts("Scan Your Card>>");
+    lcd_default();
 
     InitSSI();
 
@@ -151,18 +147,27 @@ int main(void) {
     while(1){
         status = Mfrc522.Request(PICC_REQIDL, str);
         if(status == MI_OK){
-            UARTprintf("Cartao Detectado! \n"); //Card Detected
+            UARTprintf("Card Detected! \n"); //Card Detected
             GPIOPinWrite(GPIO_PORTF_BASE, blueLED, blueLED);
         }
 
         status = Mfrc522.Anticoll(str);
-        memcpy(cardID, str, 10);
+        //lcd_clear();
+        //lcd_gotoxy(0, 1);
+        //lcd_puts(str);
+        memcpy(cardID, str, 5);
 
         if(status == MI_OK){
             UARTprintf("ID: \n");
             dumpHex((unsigned char*)cardID, CARD_LENGTH);
             GPIOPinWrite(GPIO_PORTF_BASE, blueLED, 0);
-            SysCtlDelay(SysCtlClockGet()/2); //Delay
+            lcd_clear();
+            lcd_gotoxy(1, 0);
+            lcd_puts("Access Control");
+            lcd_gotoxy(1, 1);
+            lcd_puts("Card Detected!");
+            SysCtlDelay(10000000); //Delay 1s
+            lcd_default();
         }
     }
 }
@@ -175,10 +180,20 @@ void initLeds(){
 void dumpHex(unsigned char* buffer, int len){
     int i;
 
+	//lcd_clear();
+	//lcd_gotoxy(0,0);
     UARTprintf(" ");
     for(i=0; i < len; i++) {
-        UARTprintf("0x%x, ", buffer[i]);
+        UARTprintf("%x", buffer[i]);
+        //lcd_puts(buffer[i]);
     }
-    UARTprintf("  FIM! \r\n"); //End
+    UARTprintf("    END! \r\n"); //End
 }
 
+void lcd_default(void) {
+    lcd_clear();
+    lcd_gotoxy(1,0);
+    lcd_puts("Access Control");
+    lcd_gotoxy(0,1);
+    lcd_puts("Scan Your Card>>");
+}
