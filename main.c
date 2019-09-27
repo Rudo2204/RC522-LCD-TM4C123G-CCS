@@ -10,6 +10,7 @@
 #include "driverlib/ssi.h"
 #include "utils/uartstdio.h"
 #include "LIB/Mfrc522.h"
+#include "LIB/lcd.h"
 
 /*PIN Connections:
  * Used SSI2 (Module 2)
@@ -35,6 +36,19 @@
  *
  * RST            ------------ PF0 *
  *
+ * ----------LCD SECTION -------------
+ * VSS -> GND
+ * VDD -> 5v
+ * V0 -> middle potentiometer
+ * RS -> PE0
+ * RW -> GND
+ * EN -> PE1
+ * D4 -> PB0 (PD0)
+ * D5 -> PB1 (PD1)
+ * D6 -> PC4 (PD2)
+ * D7 -> PC7 (PD3)
+ * A -> 5v
+ * K -> GND
  */
 
 #define redLED   0x00000002
@@ -48,7 +62,6 @@ void dumpHex(unsigned char* buffer, int len);
 
 int chipSelectPin = 0x20;  //PB5
 int NRSTPD = 0x01; //PF0
-
 
 uint8_t Version;
 uint8_t AntennaGain;
@@ -113,6 +126,14 @@ int main(void) {
 
     InitConsole();
     initLeds();
+
+    lcd_init();
+    lcd_clear();
+    lcd_gotoxy(2,0);
+
+    lcd_puts("Access Control");
+    lcd_gotoxy(0,1);
+    lcd_puts("Scan Your Card>>");
 
     InitSSI();
 

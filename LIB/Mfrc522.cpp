@@ -19,6 +19,9 @@
 //NRSTPD = PF0
 //SPIMODULO USADO = 2
 
+int ipSelectPin;
+int STPD;
+
 Mfrc522::Mfrc522(int chipSelectPin, int NRSTPD)
 {
     ipSelectPin = chipSelectPin;
