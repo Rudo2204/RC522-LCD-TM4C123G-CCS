@@ -44,7 +44,8 @@ void lcd_delay_us (unsigned long t)
  // int index;
   while (t--)
   {
-	  SysCtlDelay(SysCtlClockGet()/6000000);
+	  //SysCtlDelay(SysCtlClockGet()/6000000);
+	  SysCtlDelay(50);
   }
 }
 void lcd_delay_ms (unsigned long t)
@@ -52,7 +53,8 @@ void lcd_delay_ms (unsigned long t)
 //  int index;
   while (t--)
   {
-	  SysCtlDelay(SysCtlClockGet()/6000);
+      SysCtlDelay(50000);
+	  //SysCtlDelay(SysCtlClockGet()/6000);
   }
 }
 //*****************************************************************************
@@ -150,7 +152,7 @@ void lcd_init(void)
     lcd_put_byte(0,0x30);
     lcd_delay_ms(50);
     lcd_put_byte(0,0x32);
-    lcd_delay_ms(200);                // delay for LCD reset
+    lcd_delay_ms(50);                // delay for LCD reset
 
     lcd_delay_ms(2);     // wait for LCD
     lcd_put_byte(0,FOUR_BIT & LINES_5X7);            // Set LCD type
