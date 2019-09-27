@@ -2,11 +2,12 @@
 #include <stdint.h>
 
 /*
-    File: Mfrc522.cpp
-    Mfrc522 - Library for communicating with cheap MFRC522 based NFC Reader/Writers
-    Created by Eelco Rouw - Mainly based on code from Grant Gibson (www.grantgibson.co.uk) and Dr.Leong ( WWW.B2CQSHOP.COM )
-    Released into the public domain
+	File: Mfrc522.cpp
+	Mfrc522 - Library for communicating with cheap MFRC522 based NFC Reader/Writers
+	Created by Eelco Rouw - Mainly based on code from Grant Gibson (www.grantgibson.co.uk) and Dr.Leong ( WWW.B2CQSHOP.COM )
+	Released into the public domain
 */
+
 
 #include "Mfrc522.h"
 #include "driverlib/gpio.h"
@@ -19,13 +20,12 @@
 //NRSTPD = PF0
 //SPIMODULO USADO = 2
 
-int ipSelectPin;
-int STPD;
-
 Mfrc522::Mfrc522(int chipSelectPin, int NRSTPD)
 {
-    ipSelectPin = chipSelectPin;
-    STPD = NRSTPD;
+	
+	_chipSelectPin = chipSelectPin;
+	
+	_NRSTPD = NRSTPD;
 }
 
 /*
@@ -52,10 +52,12 @@ void Mfrc522::WriteReg(unsigned char addr, unsigned char val)
 {
     GPIOPinWrite(CHIPSELECT_BASE, _chipSelectPin, 0);
     //digitalWrite(_chipSelectPin, 0);
-    SPI_transfer((addr<<1)&0x7E);
-    SPI_transfer(val);
-    GPIOPinWrite(CHIPSELECT_BASE, _chipSelectPin, _chipSelectPin);
-    //digitalWrite(_chipSelectPin, 1);
+
+	SPI_transfer((addr<<1)&0x7E);
+	SPI_transfer(val);
+	
+	GPIOPinWrite(CHIPSELECT_BASE, _chipSelectPin, _chipSelectPin);
+	//digitalWrite(_chipSelectPin, 1);
 }
 
 /*
@@ -66,17 +68,17 @@ void Mfrc522::WriteReg(unsigned char addr, unsigned char val)
  */
 unsigned char Mfrc522::ReadReg(unsigned char addr)
 {
-    unsigned char val;
-    GPIOPinWrite(CHIPSELECT_BASE, _chipSelectPin, 0);
-    //digitalWrite(_chipSelectPin, 0);
+	unsigned char val;
+	GPIOPinWrite(CHIPSELECT_BASE, _chipSelectPin, 0);
+	//digitalWrite(_chipSelectPin, 0);
 
-    SPI_transfer(((addr<<1)&0x7E) | 0x80);
-    val = SPI_transfer(0x00);
-
-    GPIOPinWrite(CHIPSELECT_BASE, _chipSelectPin, _chipSelectPin);
-    //digitalWrite(_chipSelectPin, 1);
-
-    return val;
+	SPI_transfer(((addr<<1)&0x7E) | 0x80);
+	val = SPI_transfer(0x00);
+	
+	GPIOPinWrite(CHIPSELECT_BASE, _chipSelectPin, _chipSelectPin);
+	//digitalWrite(_chipSelectPin, 1);
+	
+	return val;	
 }
 
 /*
@@ -85,11 +87,11 @@ unsigned char Mfrc522::ReadReg(unsigned char addr)
  * Input parameter：reg--register address;mask--value
  * Return：null
  */
-void Mfrc522::SetBitMask(unsigned char reg, unsigned char mask)
+void Mfrc522::SetBitMask(unsigned char reg, unsigned char mask)  
 {
-    unsigned char tmp;
-    tmp = ReadReg(reg);
-    WriteReg(reg, tmp | mask);  // set bit mask
+	unsigned char tmp;
+	tmp = ReadReg(reg);
+	WriteReg(reg, tmp | mask);  // set bit mask
 }
 
 /*
@@ -98,12 +100,13 @@ void Mfrc522::SetBitMask(unsigned char reg, unsigned char mask)
  * Input parameter：reg--register address;mask--value
  * Return：null
  */
-void Mfrc522::ClearBitMask(unsigned char reg, unsigned char mask)
+void Mfrc522::ClearBitMask(unsigned char reg, unsigned char mask)  
 {
-    unsigned char tmp;
-    tmp = ReadReg(reg);
-    WriteReg(reg, tmp & (~mask));  // clear bit mask
-}
+	unsigned char tmp;
+	tmp = ReadReg(reg);
+	WriteReg(reg, tmp & (~mask));  // clear bit mask
+} 
+
 
 /*
  * Function：AntennaOn
@@ -113,14 +116,15 @@ void Mfrc522::ClearBitMask(unsigned char reg, unsigned char mask)
  */
 void Mfrc522::AntennaOn(void)
 {
-    unsigned char temp;
+	unsigned char temp;
 
-    temp = ReadReg(TxControlReg);
-    if (!(temp & 0x03))
-    {
-        SetBitMask(TxControlReg, 0x03);
-    }
+	temp = ReadReg(TxControlReg);
+	if (!(temp & 0x03))
+	{
+		SetBitMask(TxControlReg, 0x03);
+	}
 }
+
 
 /*
  * Function：AntennaOff
@@ -130,8 +134,9 @@ void Mfrc522::AntennaOn(void)
  */
 void Mfrc522::AntennaOff(void)
 {
-    ClearBitMask(TxControlReg, 0x03);
+	ClearBitMask(TxControlReg, 0x03);
 }
+
 
 /*
  * Function：Reset
@@ -141,8 +146,9 @@ void Mfrc522::AntennaOff(void)
  */
 void Mfrc522::Reset(void)
 {
-    WriteReg(CommandReg, PCD_RESETPHASE);
+	WriteReg(CommandReg, PCD_RESETPHASE);
 }
+
 
 /*
  * Function：Init
@@ -155,115 +161,116 @@ void Mfrc522::Init(void)
     GPIOPinWrite(NRSTPD_BASE, _NRSTPD, _NRSTPD);
     //digitalWrite(_NRSTPD,1);
 
-    Reset();
+	Reset();
+	 	
+	//Timer: TPrescaler*TreloadVal/6.78MHz = 24ms
+	WriteReg(TModeReg, 0x8D);		//Tauto=1; f(Timer) = 6.78MHz/TPreScaler
+	WriteReg(TPrescalerReg, 0x3E);	//TModeReg[3..0] + TPrescalerReg
+	WriteReg(TReloadRegL, 30);           
+	WriteReg(TReloadRegH, 0);
+	
+	WriteReg(TxAutoReg, 0x40);		//100%ASK
+	WriteReg(ModeReg, 0x3D);		
 
-    //Timer: TPrescaler*TreloadVal/6.78MHz = 24ms
-    WriteReg(TModeReg, 0x8D);   //Tauto=1; f(Timer) = 6.78MHz/TPreScaler
-    WriteReg(TPrescalerReg, 0x3E);  //TModeReg[3..0] + TPrescalerReg
-    WriteReg(TReloadRegL, 30);
-    WriteReg(TReloadRegH, 0);
+	//ClearBitMask(Status2Reg, 0x08);		//MFCrypto1On=0
+	//WriteReg(RxSelReg, 0x86);		//RxWait = RxSelReg[5..0]
+	//WriteReg(RFCfgReg, 0x7F);   		//RxGain = 48dB
 
-    WriteReg(TxAutoReg, 0x40);  //100%ASK
-    WriteReg(ModeReg, 0x3D);
-
-    //ClearBitMask(Status2Reg, 0x08);   //MFCrypto1On=0
-    //WriteReg(RxSelReg, 0x86); //RxWait = RxSelReg[5..0]
-    //WriteReg(RFCfgReg, 0x7F); //RxGain = 48dB
-
-    AntennaOn();
+	AntennaOn();
 }
+
 
 /*
  * Function：Request
  * Description：Searching card, read card type
  * Input parameter：reqMode--search methods，
- * TagType--return card types
- * 4400 = Mifare_UltraLight
- * 400 = Mifare_One(S50)
- * 200 = Mifare_One(S70)
- * 800 = Mifare_Pro(X)
- * 403 = Mifare_DESFire
+ *			 TagType--return card types
+ *			 	0x4400 = Mifare_UltraLight
+ *				0x0400 = Mifare_One(S50)
+ *				0x0200 = Mifare_One(S70)
+ *				0x0800 = Mifare_Pro(X)
+ *				0x4403 = Mifare_DESFire
  * return：return MI_OK if successed
  */
 unsigned char Mfrc522::Request(unsigned char reqMode, unsigned char *TagType)
 {
-    unsigned char status;
-    unsigned int backBits;
+	unsigned char status;  
+	unsigned int backBits;
 
-    WriteReg(BitFramingReg, 0x07);  //TxLastBists = BitFramingReg[2..0]
+	WriteReg(BitFramingReg, 0x07);		//TxLastBists = BitFramingReg[2..0]	???
+	
+	TagType[0] = reqMode;
+	status = ToCard(PCD_TRANSCEIVE, TagType, 1, TagType, &backBits);
 
-    TagType[0] = reqMode;
-    status = ToCard(PCD_TRANSCEIVE, TagType, 1, TagType, &backBits);
-
-    if ((status != MI_OK) || (backBits != 0x10))
-    {
-        status = MI_ERR;
-    }
-
-    return status;
+	if ((status != MI_OK) || (backBits != 0x10))
+	{    
+		status = MI_ERR;
+	}
+   
+	return status;
 }
 
 /*
  * Function：ToCard
  * Description：communicate between RC522 and ISO14443
  * Input parameter：command--MF522 command bits
- *    sendData--send data to card via rc522
- *    sendLen--send data length
- *    backData--the return data from card
- *    backLen--the length of return data
+ *			 sendData--send data to card via rc522
+ *			 sendLen--send data length		 
+ *			 backData--the return data from card
+ *			 backLen--the length of return data
  * return：return MI_OK if successed
  */
 unsigned char Mfrc522::ToCard(unsigned char command, unsigned char *sendData, unsigned char sendLen, unsigned char *backData, unsigned int *backLen)
 {
-    unsigned char status = MI_ERR;
-    unsigned char irqEn = 0x00;
-    unsigned char waitIRq = 0x00;
-    unsigned char lastBits;
-    unsigned char n;
-    unsigned int i;
+	unsigned char status = MI_ERR;
+	unsigned char irqEn = 0x00;
+	unsigned char waitIRq = 0x00;
+	unsigned char lastBits;
+	unsigned char n;
+	unsigned int i;
 
-    switch (command)
-    {
-        case PCD_AUTHENT:
-        {
-            irqEn = 0x12;
-            waitIRq = 0x10;
-            break;
-        }
-        case PCD_TRANSCEIVE:
-        {
-            irqEn = 0x77;
-            waitIRq = 0x30;
-            break;
-        }
-        default:
-            break;
-    }
+	switch (command)
+	{
+		case PCD_AUTHENT:
+		{
+			irqEn = 0x12;
+			waitIRq = 0x10;
+			break;
+		}
+		case PCD_TRANSCEIVE:
+		{
+			irqEn = 0x77;
+			waitIRq = 0x30;
+			break;
+		}
+		default:
+			break;
+	}
+   
+	WriteReg(CommIEnReg, irqEn|0x80);
+	ClearBitMask(CommIrqReg, 0x80);
+	SetBitMask(FIFOLevelReg, 0x80);
+	
+	WriteReg(CommandReg, PCD_IDLE);
 
-    WriteReg(CommIEnReg, irqEn|0x80);
-    ClearBitMask(CommIrqReg, 0x80);
-    SetBitMask(FIFOLevelReg, 0x80);
+	for (i=0; i<sendLen; i++)
+	{   
+		WriteReg(FIFODataReg, sendData[i]);    
+	}
 
-    WriteReg(CommandReg, PCD_IDLE);
+	WriteReg(CommandReg, command);
+	if (command == PCD_TRANSCEIVE)
+	{    
+		SetBitMask(BitFramingReg, 0x80);		//StartSend=1,transmission of data starts  
+	}   
 
-    for (i=0; i<sendLen; i++)
-    {
-    WriteReg(FIFODataReg, sendData[i]);
-    }
-
-    WriteReg(CommandReg, command);
-    if (command == PCD_TRANSCEIVE)
-    {
-        SetBitMask(BitFramingReg, 0x80);    //StartSend=1,transmission of data starts
-    }
-
-    i = 10000;
-    do
-    {
-        n = ReadReg(CommIrqReg);
-        i--;
-    }
-    while ((i!=0) && !(n&0x01) && !(n&waitIRq));
+	i = 10000;
+	do 
+	{
+		n = ReadReg(CommIrqReg);
+		i--;
+	}
+	while ((i!=0) && !(n&0x01) && !(n&waitIRq));
 
 	ClearBitMask(BitFramingReg, 0x80);			//StartSend=0
 	
