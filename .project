@@ -39,7 +39,7 @@
 	<variableList>
 		<variable>
 			<name>TIVAWARE_INSTALL</name>
-			<value>file:/C:/ti/TivaWare_C_Series-2.1.4.178</value>
+			<value>file:/home/rudo/Embedded/tivaware</value>
 		</variable>
 	</variableList>
 </projectDescription>
