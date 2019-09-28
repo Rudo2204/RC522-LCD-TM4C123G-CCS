@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
@@ -60,6 +61,7 @@
 void initLeds();
 void dumpHex(unsigned char* buffer, int len);
 void lcd_default();
+void lcd_print_access(unsigned char* buffer, int len);
 
 int chipSelectPin = 0x20;  //PB5
 int NRSTPD = 0x01; //PF0
@@ -70,6 +72,7 @@ uint8_t status;
 uint32_t readTeste;
 unsigned char str[MAX_LEN];
 unsigned char cardID[CARD_LENGTH];
+char master_card[CARD_LENGTH] = {0x49, 0x42, 0xb6, 0x99, 0x24};
 
 //Library modified to work with CCS
 Mfrc522 Mfrc522(chipSelectPin, NRSTPD);
@@ -158,14 +161,17 @@ int main(void) {
         memcpy(cardID, str, 5);
 
         if(status == MI_OK){
-            UARTprintf("ID: \n");
+            UARTprintf("ID: ");
             dumpHex((unsigned char*)cardID, CARD_LENGTH);
             GPIOPinWrite(GPIO_PORTF_BASE, blueLED, 0);
-            lcd_clear();
-            lcd_gotoxy(1, 0);
-            lcd_puts("Access Control");
-            lcd_gotoxy(1, 1);
-            lcd_puts("Card Detected!");
+            lcd_print_access((unsigned char*)cardID, CARD_LENGTH);
+            //for(int i_tmp=0, i_tmp < 10; i_tmp++)
+            //{
+            //    if(!temp[i_tmp])
+            //        break;
+            //    else
+            //        lcd_putc(temp[i_tmp]);
+            //}
             SysCtlDelay(10000000); //Delay 1s
             lcd_default();
         }
@@ -180,14 +186,11 @@ void initLeds(){
 void dumpHex(unsigned char* buffer, int len){
     int i;
 
-	//lcd_clear();
-	//lcd_gotoxy(0,0);
-    UARTprintf(" ");
     for(i=0; i < len; i++) {
-        UARTprintf("%x", buffer[i]);
+        UARTprintf("%x ", buffer[i]);
         //lcd_puts(buffer[i]);
     }
-    UARTprintf("    END! \r\n"); //End
+    UARTprintf("    END!\n\n"); //End
 }
 
 void lcd_default(void) {
@@ -196,4 +199,30 @@ void lcd_default(void) {
     lcd_puts("Access Control");
     lcd_gotoxy(0,1);
     lcd_puts("Scan Your Card>>");
+}
+
+void lcd_print_access(unsigned char* buffer, int len) {
+    int i;
+    bool enable_access = true;
+    lcd_clear();
+    lcd_gotoxy(1, 1);
+    lcd_puts("ID: ");
+    for(i=0; i < len; i++) {
+        if(buffer[i] != master_card[i])
+            enable_access = false;
+        if((buffer[i]/16) < 10)
+            lcd_put_byte(1, buffer[i]/16 + 48);
+        else
+            lcd_put_byte(1, buffer[i]/16 + 55);
+        if((buffer[i]%16) < 10)
+            lcd_put_byte(1, buffer[i]%16 + 48);
+        else
+            lcd_put_byte(1, buffer[i]%16 + 55);
+    }
+    lcd_gotoxy(1, 0);
+    if(enable_access)
+        lcd_puts("Access Granted!");
+    else
+        lcd_puts("Access Denied!");
+
 }
