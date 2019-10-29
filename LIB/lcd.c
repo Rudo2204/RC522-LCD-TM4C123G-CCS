@@ -146,14 +146,6 @@ void lcd_init(void)
     LCD_EN_0;
     lcd_delay_ms(200);                // delay for power on
 
-    // reset LCD
-    lcd_put_byte(0,0x30);
-    lcd_delay_ms(50);
-    lcd_put_byte(0,0x30);
-    lcd_delay_ms(50);
-    lcd_put_byte(0,0x32);
-    lcd_delay_ms(50);                // delay for LCD reset
-
     lcd_delay_ms(2);     // wait for LCD
     lcd_put_byte(0,FOUR_BIT & LINES_5X7);            // Set LCD type
     lcd_delay_ms(2);     // wait for LCD
