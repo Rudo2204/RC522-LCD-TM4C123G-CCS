@@ -41,9 +41,9 @@
  * VSS -> GND
  * VDD -> 5v
  * V0 -> middle potentiometer
- * RS -> PE0
+ * RS -> PF4 (PE0)
  * RW -> GND
- * EN -> PE1
+ * EN -> PD6 (PE1)
  * D4 -> PB0 (PD0)
  * D5 -> PB1 (PD1)
  * D6 -> PC4 (PD2)
@@ -126,7 +126,10 @@ void InitSSI(){
 }
 
 int main(void) {
-    SysCtlClockSet(SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ); //40MHz
+    SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ); // 80MHz
+
+    // globally disable interrupt
+    IntMasterDisable();
 
     InitConsole();
     initLeds();
@@ -141,6 +144,9 @@ int main(void) {
 
     Mfrc522.Init();
 
+    // enable interrupt again
+    IntMasterEnable();
+
     Version = Mfrc522.ReadReg(VersionReg);
     AntennaGain = Mfrc522.ReadReg(PICC_REQIDL) & (0x07<<4);
 
@@ -148,6 +154,10 @@ int main(void) {
     UARTprintf("Antenna Gain: '0x%x' \n\n", AntennaGain);
 
     while(1){
+        //UARTprintf("Version: '0x%x' \n", Version);
+        //UARTprintf("Antenna Gain: '0x%x' \n\n", AntennaGain);
+        //SysCtlDelay(10000000); //Delay 1s
+
         status = Mfrc522.Request(PICC_REQIDL, str);
         if(status == MI_OK){
             UARTprintf("Card Detected! \n"); //Card Detected

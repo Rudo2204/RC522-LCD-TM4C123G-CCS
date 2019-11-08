@@ -130,17 +130,17 @@ void lcd_put_byte(unsigned char rs, unsigned char data)
 //*****************************************************************************
 void lcd_init(void)
 {
-		SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
-		 SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
+		 SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+		 SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
 		 SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);
 
 		    // Set all signal pins as output
-		    GPIOPinTypeGPIOOutput(GPIO_PORTE_BASE, GPIO_PIN_0);
-		    GPIOPinTypeGPIOOutput(GPIO_PORTE_BASE, GPIO_PIN_1);
+		    GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_4);
+		    GPIOPinTypeGPIOOutput(GPIO_PORTD_BASE, GPIO_PIN_6);
 
-		    GPIOPinTypeGPIOOutput(GPIO_PORTB_BASE, GPIO_PIN_0);
-		    GPIOPinTypeGPIOOutput(GPIO_PORTB_BASE, GPIO_PIN_1);
 		    GPIOPinTypeGPIOOutput(GPIO_PORTC_BASE, GPIO_PIN_4);
+		    GPIOPinTypeGPIOOutput(GPIO_PORTC_BASE, GPIO_PIN_5);
+		    GPIOPinTypeGPIOOutput(GPIO_PORTC_BASE, GPIO_PIN_6);
 		    GPIOPinTypeGPIOOutput(GPIO_PORTC_BASE, GPIO_PIN_7);
     LCD_RS_0;
     LCD_EN_0;
