@@ -1,6 +1,6 @@
-# RFID - RC522 with Tiva C TM4C123G and CCS (Code Composer Studio)
+# RC522 with TM4C123G using Code Composer Studio
 
-## This project uses a RFID - RC522 with TM4C123G. The library was modified to work with Code Composer Studio.
-
-
-### v1.0
+## This project uses a RFID module - RC522 with TM4C123G.
+The project also uses a modified version of original Energia's RC522 library to work with CCS.
+### Version: v2.0
+This forked version added LCD 1602 display module.
