@@ -1,22 +1,3 @@
-/******************************************************************************
- *
- *    Module       : LCD.H
- *    Description  : This header file includes definitions and prototypes of
- *          API functions that support you to display text on YM1602C 16x2 LCD.
- *
- *  Tool           : CCS 5.1
- *  Chip           : MSP430G2xxx
- *  History        : 21-7-2012
- *  Version        : 2.1
- *
- *  Author         : Nguyen Tien Manh, CLB NCKH DDT (manhcly@ymail.com)
- *  Notes          :
- *      To apply these functions, you must include this header file and add
- *      the lcd.c file to your project.
- *      For hardware connecting, see "PINS MAPPING" in LCD.C
- *
-******************************************************************************/
-
 #ifndef LCD_H_
 #define LCD_H_
 

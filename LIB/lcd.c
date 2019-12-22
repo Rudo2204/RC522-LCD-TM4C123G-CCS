@@ -1,31 +1,3 @@
-/******************************************************************************
- *
- *    Module       : lcd.c
- *    Description  : This file describes API functions that support you to
- *                   display text on YM1602C 16x2 LCD.
- *
- *  Tool           : CCS 5.1
- *  Chip           : MSP430G2xxx
- *  History        : 21-7-2012
- *  Version        : 2.1
- *
- *  Author         : Nguyen Tien Manh, CLB NCKH DDT (manhcly@ymail.com)
- *  Notes          :
- *      To apply these functions, you must include the header file lcd.h and
- *      add this code file to your project.
- *
- *      For hardware connecting, see "PINS MAPPING" below.
- *
- *      These functions just help you to "write", not "read" LCD status.
- *
-******************************************************************************/
-
- /****************************************************************************
- * IMPORT
-******************************************************************************/
-
-/* Standard includes. */
-
 #include "lcd.h"
 
  /****************************************************************************
@@ -44,8 +16,8 @@ void lcd_delay_us (unsigned long t)
  // int index;
   while (t--)
   {
-	  //SysCtlDelay(SysCtlClockGet()/6000000);
-	  SysCtlDelay(50);
+      //SysCtlDelay(SysCtlClockGet()/6000000);
+      SysCtlDelay(50);
   }
 }
 void lcd_delay_ms (unsigned long t)
@@ -54,7 +26,7 @@ void lcd_delay_ms (unsigned long t)
   while (t--)
   {
       SysCtlDelay(50000);
-	  //SysCtlDelay(SysCtlClockGet()/6000);
+      //SysCtlDelay(SysCtlClockGet()/6000);
   }
 }
 //*****************************************************************************
@@ -68,19 +40,19 @@ void lcd_put_byte(unsigned char rs, unsigned char data)
     LCD_EN_0;
 
     // send the high nibble
-	if (data&BIT4)
+    if (data&BIT4)
         {LCD_DATA_4_1;}
         else
         {LCD_DATA_4_0;}
-	if (data&BIT5)
+    if (data&BIT5)
         {LCD_DATA_5_1;}
         else
         {LCD_DATA_5_0;}
-	if (data&BIT6)
+    if (data&BIT6)
         {LCD_DATA_6_1;}
         else
         {LCD_DATA_6_0;}
-	if (data&BIT7)
+    if (data&BIT7)
         {LCD_DATA_7_1;}
         else
         {LCD_DATA_7_0;}
@@ -130,18 +102,18 @@ void lcd_put_byte(unsigned char rs, unsigned char data)
 //*****************************************************************************
 void lcd_init(void)
 {
-		 SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
-		 SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
-		 SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);
+         SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+         SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
+         SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);
 
-		    // Set all signal pins as output
-		    GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_4);
-		    GPIOPinTypeGPIOOutput(GPIO_PORTD_BASE, GPIO_PIN_6);
+            // Set all signal pins as output
+            GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_4);
+            GPIOPinTypeGPIOOutput(GPIO_PORTD_BASE, GPIO_PIN_6);
 
-		    GPIOPinTypeGPIOOutput(GPIO_PORTC_BASE, GPIO_PIN_4);
-		    GPIOPinTypeGPIOOutput(GPIO_PORTC_BASE, GPIO_PIN_5);
-		    GPIOPinTypeGPIOOutput(GPIO_PORTC_BASE, GPIO_PIN_6);
-		    GPIOPinTypeGPIOOutput(GPIO_PORTC_BASE, GPIO_PIN_7);
+            GPIOPinTypeGPIOOutput(GPIO_PORTC_BASE, GPIO_PIN_4);
+            GPIOPinTypeGPIOOutput(GPIO_PORTC_BASE, GPIO_PIN_5);
+            GPIOPinTypeGPIOOutput(GPIO_PORTC_BASE, GPIO_PIN_6);
+            GPIOPinTypeGPIOOutput(GPIO_PORTC_BASE, GPIO_PIN_7);
     LCD_RS_0;
     LCD_EN_0;
     lcd_delay_ms(200);                // delay for power on
@@ -259,7 +231,7 @@ void lcd_put_num (unsigned long val, char dec, unsigned char neg)
         total = i;
     if (neg !=0 )
       lcd_putc ('-');
-    if ((total - dec) <=0)	// if total < dec put 0.xxx
+    if ((total - dec) <=0)    // if total < dec put 0.xxx
         lcd_putc('0');
     else
     {
@@ -275,7 +247,7 @@ void lcd_put_num (unsigned long val, char dec, unsigned char neg)
     if (dec > 0)
     {
       lcd_putc('.');
-      if ( (dec - total)> 0)	// ex: val = 55; dec = 3 put 0.055
+      if ( (dec - total)> 0)    // ex: val = 55; dec = 3 put 0.055
       {
         for ( i = 0; i < (dec-total);i++)
           lcd_putc('0');
