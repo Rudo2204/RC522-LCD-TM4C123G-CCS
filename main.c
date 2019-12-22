@@ -30,12 +30,11 @@
  * Further versions should auto-change this values.
  *
  *
- * SDA / CS / FSS ------------ PB5
- * SCK  / CLK     ------------ PB4
- * MOSI / TX      ------------ PB7
- * MISO /  RX     ------------ PB6
- *
- * RST            ------------ PF0 *
+ * SDA / CS / FSS -> PB5
+ * SCK  / CLK     -> PB4
+ * MOSI / TX      -> PB7
+ * MISO /  RX     -> PB6
+ * RST            -> PF0 *
  *
  * ----------LCD SECTION -------------
  * VSS -> GND
@@ -43,11 +42,11 @@
  * V0 -> middle potentiometer
  * RS -> PF4 (PE0)
  * RW -> GND
- * EN -> PD6 (PE1)
- * D4 -> PB0 (PD0)
- * D5 -> PB1 (PD1)
- * D6 -> PC4 (PD2)
- * D7 -> PC7 (PD3)
+ * EN -> PD6
+ * D4 -> PC4
+ * D5 -> PC5
+ * D6 -> PC6
+ * D7 -> PC7
  * A -> 5v
  * K -> GND
  */
@@ -74,7 +73,7 @@ unsigned char str[MAX_LEN];
 unsigned char cardID[CARD_LENGTH];
 char master_card[CARD_LENGTH] = {0x49, 0x42, 0xb6, 0x99, 0x24};
 
-//Library modified to work with CCS
+// Library modified to work with CCS
 Mfrc522 Mfrc522(chipSelectPin, NRSTPD);
 
 void InitConsole(void)
@@ -90,36 +89,32 @@ void InitConsole(void)
 
     GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
 
-    UARTStdioConfig(0, 115200, 16000000);
+    UARTStdioConfig(0, 115200, 16000000); // UART 115200 Baud
 }
 
 void InitSSI(){
     uint32_t junkAuxVar;
 
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI2);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI2); // Enable SSI2 pheripheral
 
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB); //SDA
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF); //reset
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB); // SDA
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF); // reset
 
     GPIOPinConfigure(GPIO_PB4_SSI2CLK);
-    //GPIOPinConfigure(GPIO_PB5_SSI2FSS);
+    //GPIOPinConfigure(GPIO_PB5_SSI2FSS); // Only one master one slave so can ignore this
     GPIOPinConfigure(GPIO_PB6_SSI2RX);
     GPIOPinConfigure(GPIO_PB7_SSI2TX);
 
     GPIOPinTypeSSI(GPIO_PORTB_BASE, GPIO_PIN_4 | GPIO_PIN_6 |
                    GPIO_PIN_7);
 
-    GPIOPinTypeGPIOOutput(GPIO_PORTB_BASE, GPIO_PIN_5); //chipSelectPin
-    GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_0); //NRSTPD
+    GPIOPinTypeGPIOOutput(GPIO_PORTB_BASE, GPIO_PIN_5); // chipSelectPin
+    GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_0); // NRSTPD
 
-    //
     SSIConfigSetExpClk(SSI2_BASE, SysCtlClockGet(), SSI_FRF_MOTO_MODE_0, SSI_MODE_MASTER, 4000000, 8);
-    //
-    // Enable the SSI0 module.
-    //
-    SSIEnable(SSI2_BASE);
+    SSIEnable(SSI2_BASE); // Enable the SSI2 module.
 
-    while(SSIDataGetNonBlocking(SSI2_BASE, &junkAuxVar)){}
+    while(SSIDataGetNonBlocking(SSI2_BASE, &junkAuxVar)){} // This is here in case of multiple slaves
 
     UARTprintf("SSI Enabled! SPI Mode!  \nData: 8bits.\n\n");
 
@@ -128,23 +123,19 @@ void InitSSI(){
 int main(void) {
     SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ); // 80MHz
 
-    // globally disable interrupt
+    // Globally disable interrupt
     IntMasterDisable();
 
     InitConsole();
     initLeds();
-
     lcd_init();
-    lcd_default();
-
     InitSSI();
+    Mfrc522.Init();
 
     GPIOPinWrite(GPIO_PORTB_BASE, chipSelectPin, 0);
     GPIOPinWrite(GPIO_PORTF_BASE, NRSTPD, NRSTPD);
 
-    Mfrc522.Init();
-
-    // enable interrupt again
+    // Enable interrupt again
     IntMasterEnable();
 
     Version = Mfrc522.ReadReg(VersionReg);
@@ -152,37 +143,24 @@ int main(void) {
 
     UARTprintf("Version: '0x%x' \n", Version);
     UARTprintf("Antenna Gain: '0x%x' \n\n", AntennaGain);
+    lcd_default();
 
     while(1){
-        //UARTprintf("Version: '0x%x' \n", Version);
-        //UARTprintf("Antenna Gain: '0x%x' \n\n", AntennaGain);
-        //SysCtlDelay(10000000); //Delay 1s
-
         status = Mfrc522.Request(PICC_REQIDL, str);
         if(status == MI_OK){
-            UARTprintf("Card Detected! \n"); //Card Detected
+            UARTprintf("Card Detected! \n");
             GPIOPinWrite(GPIO_PORTF_BASE, blueLED, blueLED);
         }
 
-        status = Mfrc522.Anticoll(str);
-        //lcd_clear();
-        //lcd_gotoxy(0, 1);
-        //lcd_puts(str);
-        memcpy(cardID, str, 5);
+        status = Mfrc522.Anticoll(str); // Check if collision happened, if not then will proceed
+        memcpy(cardID, str, 5); // This is not optimal but is the easiest way
 
         if(status == MI_OK){
             UARTprintf("ID: ");
             dumpHex((unsigned char*)cardID, CARD_LENGTH);
-            GPIOPinWrite(GPIO_PORTF_BASE, blueLED, 0);
             lcd_print_access((unsigned char*)cardID, CARD_LENGTH);
-            //for(int i_tmp=0, i_tmp < 10; i_tmp++)
-            //{
-            //    if(!temp[i_tmp])
-            //        break;
-            //    else
-            //        lcd_putc(temp[i_tmp]);
-            //}
-            SysCtlDelay(10000000); //Delay 1s
+            SysCtlDelay(10000000);
+            GPIOPinWrite(GPIO_PORTF_BASE, blueLED, 0);
             lcd_default();
         }
     }
@@ -198,9 +176,8 @@ void dumpHex(unsigned char* buffer, int len){
 
     for(i=0; i < len; i++) {
         UARTprintf("%x ", buffer[i]);
-        //lcd_puts(buffer[i]);
     }
-    UARTprintf("    END!\n\n"); //End
+    UARTprintf("    END!\n\n");
 }
 
 void lcd_default(void) {
