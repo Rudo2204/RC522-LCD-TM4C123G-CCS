@@ -29,10 +29,10 @@ Mfrc522::Mfrc522(int chipSelectPin, int NRSTPD)
 }
 
 /*
- * Function：WriteReg
- * Description：write a byte data into one register of MR RC522
- * Input parameter：addr--register address；val--the value that need to write in
- * Return：Null
+ * Function:WriteReg
+ * Description:write a byte data into one register of MR RC522
+ * Input parameter:addr--register address;val--the value that need to write in
+ * Return:Null
  */
 uint8_t SPI_transfer(uint8_t data){
        uint32_t rxtxData;
@@ -61,10 +61,10 @@ void Mfrc522::WriteReg(unsigned char addr, unsigned char val)
 }
 
 /*
- * Function：ReadReg
- * Description：read a byte data into one register of MR RC522
- * Input parameter：addr--register address
- * Return：return the read value
+ * Function:ReadReg
+ * Description:read a byte data into one register of MR RC522
+ * Input parameter:addr--register address
+ * Return:return the read value
  */
 unsigned char Mfrc522::ReadReg(unsigned char addr)
 {
@@ -82,10 +82,10 @@ unsigned char Mfrc522::ReadReg(unsigned char addr)
 }
 
 /*
- * Function：SetBitMask
- * Description：set RC522 register bit
- * Input parameter：reg--register address;mask--value
- * Return：null
+ * Function:SetBitMask
+ * Description:set RC522 register bit
+ * Input parameter:reg--register address;mask--value
+ * Return:null
  */
 void Mfrc522::SetBitMask(unsigned char reg, unsigned char mask)
 {
@@ -95,10 +95,10 @@ void Mfrc522::SetBitMask(unsigned char reg, unsigned char mask)
 }
 
 /*
- * Function：ClearBitMask
- * Description：clear RC522 register bit
- * Input parameter：reg--register address;mask--value
- * Return：null
+ * Function:ClearBitMask
+ * Description:clear RC522 register bit
+ * Input parameter:reg--register address;mask--value
+ * Return:null
  */
 void Mfrc522::ClearBitMask(unsigned char reg, unsigned char mask)
 {
@@ -109,10 +109,10 @@ void Mfrc522::ClearBitMask(unsigned char reg, unsigned char mask)
 
 
 /*
- * Function：AntennaOn
- * Description：Turn on antenna, every time turn on or shut down antenna need at least 1ms delay
- * Input parameter：null
- * Return：null
+ * Function:AntennaOn
+ * Description:Turn on antenna, every time turn on or shut down antenna need at least 1ms delay
+ * Input parameter:null
+ * Return:null
  */
 void Mfrc522::AntennaOn(void)
 {
@@ -127,10 +127,10 @@ void Mfrc522::AntennaOn(void)
 
 
 /*
- * Function：AntennaOff
- * Description：Turn off antenna, every time turn on or shut down antenna need at least 1ms delay
- * Input parameter：null
- * Return：null
+ * Function:AntennaOff
+ * Description:Turn off antenna, every time turn on or shut down antenna need at least 1ms delay
+ * Input parameter:null
+ * Return:null
  */
 void Mfrc522::AntennaOff(void)
 {
@@ -139,10 +139,10 @@ void Mfrc522::AntennaOff(void)
 
 
 /*
- * Function：Reset
- * Description： reset RC522
- * Input parameter：null
- * Return：null
+ * Function:Reset
+ * Description: reset RC522
+ * Input parameter:null
+ * Return:null
  */
 void Mfrc522::Reset(void)
 {
@@ -151,10 +151,10 @@ void Mfrc522::Reset(void)
 
 
 /*
- * Function：Init
- * Description：initilize RC522
- * Input parameter：null
- * Return：null
+ * Function:Init
+ * Description:initilize RC522
+ * Input parameter:null
+ * Return:null
  */
 void Mfrc522::Init(void)
 {
@@ -181,16 +181,16 @@ void Mfrc522::Init(void)
 
 
 /*
- * Function：Request
- * Description：Searching card, read card type
- * Input parameter：reqMode--search methods，
+ * Function:Request
+ * Description:Searching card, read card type
+ * Input parameter:reqMode--search methods,
  *             TagType--return card types
  *                 0x4400 = Mifare_UltraLight
  *                0x0400 = Mifare_One(S50)
  *                0x0200 = Mifare_One(S70)
  *                0x0800 = Mifare_Pro(X)
  *                0x4403 = Mifare_DESFire
- * return：return MI_OK if successed
+ * return:return MI_OK if successed
  */
 unsigned char Mfrc522::Request(unsigned char reqMode, unsigned char *TagType)
 {
@@ -211,14 +211,14 @@ unsigned char Mfrc522::Request(unsigned char reqMode, unsigned char *TagType)
 }
 
 /*
- * Function：ToCard
- * Description：communicate between RC522 and ISO14443
- * Input parameter：command--MF522 command bits
+ * Function:ToCard
+ * Description:communicate between RC522 and ISO14443
+ * Input parameter:command--MF522 command bits
  *             sendData--send data to card via rc522
  *             sendLen--send data length
  *             backData--the return data from card
  *             backLen--the length of return data
- * return：return MI_OK if successed
+ * return:return MI_OK if successed
  */
 unsigned char Mfrc522::ToCard(unsigned char command, unsigned char *sendData, unsigned char sendLen, unsigned char *backData, unsigned int *backLen)
 {
@@ -325,10 +325,10 @@ unsigned char Mfrc522::ToCard(unsigned char command, unsigned char *sendData, un
 
 
 /*
- * Function：MFRC522_Anticoll
- * Description：Prevent conflict, read the card serial number
- * Input parameter：serNum--return the 4 bytes card serial number, the 5th byte is recheck byte
- * return：return MI_OK if successed
+ * Function:MFRC522_Anticoll
+ * Description:Prevent conflict, read the card serial number
+ * Input parameter:serNum--return the 4 bytes card serial number, the 5th byte is recheck byte
+ * return:return MI_OK if successed
  */
 unsigned char Mfrc522::Anticoll(unsigned char *serNum)
 {
@@ -364,10 +364,10 @@ unsigned char Mfrc522::Anticoll(unsigned char *serNum)
 
 
 /*
- * Function：CalulateCRC
- * Description：Use MF522 to calculate CRC
- * Input parameter：pIndata--the CRC data need to be read，len--data length，pOutData-- the caculated result of CRC
- * return：Null
+ * Function:CalulateCRC
+ * Description:Use MF522 to calculate CRC
+ * Input parameter:pIndata--the CRC data need to be read,len--data length,pOutData-- the caculated result of CRC
+ * return:Null
  */
 void Mfrc522::CalulateCRC(unsigned char *pIndata, unsigned char len, unsigned char *pOutData)
 {
@@ -397,10 +397,10 @@ void Mfrc522::CalulateCRC(unsigned char *pIndata, unsigned char len, unsigned ch
 
 
 /*
- * Function：SelectTag
- * Description：Select card, read card storage volume
- * Input parameter：serNum--Send card serial number
- * return：return the card storage volume
+ * Function:SelectTag
+ * Description:Select card, read card storage volume
+ * Input parameter:serNum--Send card serial number
+ * return:return the card storage volume
  */
 unsigned char Mfrc522::SelectTag(unsigned char *serNum)
 {
@@ -435,15 +435,15 @@ unsigned char Mfrc522::SelectTag(unsigned char *serNum)
 
 
 /*
- * Function：Auth
- * Description：verify card password
- * Input parameters：authMode--password verify mode
+ * Function:Auth
+ * Description:verify card password
+ * Input parameters:authMode--password verify mode
                  0x60 = verify A password key
                  0x61 = verify B password key
              BlockAddr--Block address
              Sectorkey--Block password
-             serNum--Card serial number ，4 bytes
- * return：return MI_OK if successed
+             serNum--Card serial number ,4 bytes
+ * return:return MI_OK if successed
  */
 unsigned char Mfrc522::Auth(unsigned char authMode, unsigned char BlockAddr, unsigned char *Sectorkey, unsigned char *serNum)
 {
@@ -474,10 +474,10 @@ unsigned char Mfrc522::Auth(unsigned char authMode, unsigned char BlockAddr, uns
 
 
 /*
- * Function：ReadBlock
- * Description：Read data
- * Input parameters：blockAddr--block address;recvData--the block data which are read
- * return：return MI_OK if successed
+ * Function:ReadBlock
+ * Description:Read data
+ * Input parameters:blockAddr--block address;recvData--the block data which are read
+ * return:return MI_OK if successed
  */
 unsigned char Mfrc522::ReadBlock(unsigned char blockAddr, unsigned char *recvData)
 {
@@ -499,10 +499,10 @@ unsigned char Mfrc522::ReadBlock(unsigned char blockAddr, unsigned char *recvDat
 
 
 /*
- * Function：WriteBlock
- * Description：write block data
- * Input parameters：blockAddr--block address;writeData--Write 16 bytes data into block
- * return：return MI_OK if successed
+ * Function:WriteBlock
+ * Description:write block data
+ * Input parameters:blockAddr--block address;writeData--Write 16 bytes data into block
+ * return:return MI_OK if successed
  */
 unsigned char Mfrc522::WriteBlock(unsigned char blockAddr, unsigned char *writeData)
 {
@@ -541,10 +541,10 @@ unsigned char Mfrc522::WriteBlock(unsigned char blockAddr, unsigned char *writeD
 
 
 /*
- * Function：Halt
- * Description：Command the cards into sleep mode
- * Input parameters：null
- * return：null
+ * Function:Halt
+ * Description:Command the cards into sleep mode
+ * Input parameters:null
+ * return:null
  */
 void Mfrc522::Halt(void)
 {
