@@ -185,7 +185,7 @@ void lcd_default(void) {
     lcd_gotoxy(1,0);
     lcd_puts("Access Control");
     lcd_gotoxy(0,1);
-    lcd_puts("Scan Your Card>>");
+    lcd_puts("<<Scan Your Card");
 }
 
 void lcd_print_access(unsigned char* buffer, int len) {
